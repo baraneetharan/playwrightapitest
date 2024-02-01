@@ -20,15 +20,8 @@ jobs:
         run: mvn -B install -D skipTests --no-transfer-progress
       - name: Install Playwright
         run: mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install --with-deps"
-
-  run-in-embedded-tomcat:
-    name: Run in Embedded Tomcat
-    runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright/java:v1.41.0-jammy
-    steps:
       - name: Run in Embedded Tomcat
-        run: mvn spring-boot:run -DskipTests -Dserver.port=9090
+        run: mvn spring-boot:run -DskipTests -Dserver.port=9090  
 
   run-tests:
     name: Run Tests
