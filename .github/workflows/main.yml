@@ -20,8 +20,9 @@ jobs:
         run: mvn -B install -D skipTests --no-transfer-progress
       - name: Install Playwright
         run: mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install --with-deps"
-      - name: Run in Embedded Tomcat
-        run: mvn spring-boot:run -DskipTests -Dserver.port=9090  
+      - name: Run Spring Boot App
+        run: mvn spring-boot:run -DskipTests -Dserver.port=9090 &
+        # Alternatively, you can use java -jar target/demo-0.0.1-SNAPSHOT.jar &
 
   run-tests:
     name: Run Tests
@@ -31,7 +32,7 @@ jobs:
     steps:
       - name: Run tests
         run: mvn -Dtest=Customerapitest test
-    needs: build-and-deploy
+    needs: build-and-deploy # this is the correct way to specify dependency
 
   report-test-results:
     name: Report Test Results
@@ -45,7 +46,7 @@ jobs:
           echo "Test Results: $(cat report.json)" >> output.txt
         env:
           HOME: /root
-    needs: run-tests
+    needs: run-tests # this is the correct way to specify dependency
 
   stop-and-close-tomcat:
     name: Stop and Close Run in Embedded Tomcat
@@ -55,4 +56,5 @@ jobs:
     steps:
       - name: Stop and Close Run in Embedded Tomcat
         run: mvn spring-boot:stop
-    needs: run-tests
+        # Alternatively, you can use kill $(ps aux | grep '[j]ava' | awk '{print $2}')
+    needs: run-tests # this is the correct way to specify dependency
