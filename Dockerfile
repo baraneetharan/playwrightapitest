@@ -2,11 +2,7 @@
 
 FROM openjdk:17-jdk-slim AS build
 
-COPY pom.xml mvnw ./
-COPY .mvn .mvn
-RUN mvn spring-boot:run -DskipTests
-
-COPY src src
+COPY . .
 RUN mvn package
 
 FROM openjdk:17-jdk-slim
