@@ -5,8 +5,8 @@ on:
   pull_request:
     branches: [ main, master ]
 jobs:
-  playwright:
-    name: 'Playwright Tests'
+  build-and-deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright/java:v1.41.0-jammy
@@ -19,16 +19,44 @@ jobs:
       - name: Build & Install
         run: mvn -B install -D skipTests --no-transfer-progress
       - name: Install Playwright
-        run: mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install --with-deps"  
+        run: mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install --with-deps"
+
+  run-in-embedded-tomcat:
+    name: Run in Embedded Tomcat
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright/java:v1.41.0-jammy
+    steps:
       - name: Run in Embedded Tomcat
         run: mvn spring-boot:run -DskipTests -Dserver.port=9090
+
+  run-tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright/java:v1.41.0-jammy
+    steps:
       - name: Run tests
         run: mvn -Dtest=Customerapitest test
+
+  report-test-results:
+    name: Report Test Results
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright/java:v1.41.0-jammy
+    steps:
       - name: Report test results
         run: |
           mvn test -Dtest=TestAPI -DoutputType=json > report.json
-          echo "Test Results: $(cat report.json)" >> output.txt  
+          echo "Test Results: $(cat report.json)" >> output.txt
         env:
           HOME: /root
+
+  stop-and-close-tomcat:
+    name: Stop and Close Run in Embedded Tomcat
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright/java:v1.41.0-jammy
+    steps:
       - name: Stop and Close Run in Embedded Tomcat
         run: mvn spring-boot:stop
