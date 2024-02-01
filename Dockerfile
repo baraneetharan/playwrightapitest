@@ -9,7 +9,7 @@ WORKDIR /app
 COPY . .
 
 # Run the Maven build
-RUN mvn clean package -DskipTests
+RUN /mvnw clean package -DskipTests
 
 # Copy the built artifacts into the app directory
 COPY target/*.jar .
