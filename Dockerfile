@@ -6,7 +6,7 @@ FROM openjdk:17-jdk-slim AS builder
 WORKDIR /app
 
 # Copy the pom.xml file into the build context
-COPY pom.xml .
+COPY . .
 
 # Run the Maven build
 RUN mvn clean package -DskipTests
