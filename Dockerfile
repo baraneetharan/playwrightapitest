@@ -1,13 +1,15 @@
 # playwrightapitest-0.0.1-SNAPSHOT.jar
 
-FROM eclipse-temurin:17-jdk-focal
- 
-WORKDIR /app
- 
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline
- 
-COPY src ./src
- 
-CMD ["./mvnw", "spring-boot:run"]
+FROM openjdk:17-jdk-slim AS build
+
+COPY pom.xml mvnw ./
+COPY .mvn .mvn
+RUN ./mvnw dependency:resolve
+
+COPY src src
+RUN ./mvnw package
+
+FROM openjdk:17-jdk-slim
+WORKDIR demo
+COPY --from=build target/*.jar demo.jar
+ENTRYPOINT ["java", "-jar", "demo.jar"]
