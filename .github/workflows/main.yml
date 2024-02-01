@@ -21,7 +21,7 @@ jobs:
       - name: Install Playwright
         run: mvn exec:java -e -D exec.mainClass=com.microsoft.playwright.CLI -D exec.args="install --with-deps"
       - name: Run Spring Boot App
-        run: mvn spring-boot:run -DskipTests -Dserver.port=9090 &
+        run: mvn spring-boot:run -DskipTests
         # Alternatively, you can use java -jar target/demo-0.0.1-SNAPSHOT.jar &
       - name: Run tests
         run: mvn -Dtest=Customerapitest test
