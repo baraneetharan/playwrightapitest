@@ -41,9 +41,14 @@ public class Customerapitest {
     // Assuming personal access token available in the environment.
     // headers.put("Authorization", "token " + API_TOKEN);
 
+    String baseUrl = System.getenv("WORKFLOW_URL");
+    if (baseUrl == null) {
+      baseUrl = "http://localhost:9090"; // use localhost as default
+    }
+    
     request = playwright.request().newContext(new APIRequest.NewContextOptions()
         // All requests we send go to this API endpoint.
-        .setBaseURL("http://localhost:9090")
+        .setBaseURL(baseUrl)
         .setExtraHTTPHeaders(headers));
   }
 
