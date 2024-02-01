@@ -1,4 +1,10 @@
 # playwrightapitest-0.0.1-SNAPSHOT.jar
+
+# Build stage
+#
+FROM openjdk:17-jdk-slim-buster
+COPY . .
+RUN mvn clean package -Pprod -DskipTests
 FROM openjdk:17-jdk-slim-buster
 WORKDIR /app
 
