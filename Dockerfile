@@ -1,15 +1,14 @@
-FROM eclipse-temurin:17-jdk-alpine
-VOLUME /tmp
+FROM ubuntu:latest AS build
 
-# Build the application
+RUN apt-get update
+RUN apt-get install openjdk-17-jdk -y
 COPY . .
+
 RUN mvn clean package -DskipTests
 
-# Create a package
-COPY target/*.jar app.jar
+FROM openjdk:17-jdk-slim
 
-# Set the entrypoint
-ENTRYPOINT ["java","-jar","/app.jar"]
-
-# Expose port 8080
 EXPOSE 8080
+
+COPY target/playwrightapitest-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
