@@ -31,6 +31,7 @@ jobs:
     steps:
       - name: Run tests
         run: mvn -Dtest=Customerapitest test
+    needs: build-and-deploy
 
   report-test-results:
     name: Report Test Results
@@ -44,6 +45,7 @@ jobs:
           echo "Test Results: $(cat report.json)" >> output.txt
         env:
           HOME: /root
+    needs: run-tests
 
   stop-and-close-tomcat:
     name: Stop and Close Run in Embedded Tomcat
@@ -53,3 +55,4 @@ jobs:
     steps:
       - name: Stop and Close Run in Embedded Tomcat
         run: mvn spring-boot:stop
+    needs: run-tests
