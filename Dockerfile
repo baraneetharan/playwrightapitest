@@ -1,16 +1,21 @@
 # playwrightapitest-0.0.1-SNAPSHOT.jar
 
-FROM openjdk:17-jdk-slim AS build
+FROM openjdk:17-jdk-slim AS builder
 
-COPY pom.xml mvnw ./
-COPY .mvn .mvn
-RUN cd build && ./mvnw dependency:resolve
+# Set the workdir to /app
+WORKDIR /app
 
-COPY src src
-RUN cd build && ./mvnw package
+# Copy the pom.xml file into the build context
+COPY pom.xml .
 
-FROM openjdk:17-jdk-slim
-WORKDIR demo
-COPY --from=build target/*.jar demo.jar
+# Run the Maven build
+RUN mvn clean package -DskipTests
+
+# Copy the built artifacts into the app directory
+COPY target/*.jar .
+
+# Expose port 8080
 EXPOSE 8080
-CMD ["java", "-jar", "demo.jar"]
+
+# Run the Spring Boot application
+CMD ["java", "-jar", "app.jar"]
