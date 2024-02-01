@@ -1,15 +1,10 @@
-#
-# Build stage
-#
-FROM maven:3.8.2-jdk-17 AS build
-COPY . .
-RUN mvn clean package -Pprod -DskipTests
+FROM openjdk:17-jdk-slim-buster
+WORKDIR /app
 
-#
-# Package stage
-#
-FROM openjdk:17-jdk-slim
-COPY --from=build /target/playwrightapitest-0.0.1-SNAPSHOT.jar demo.jar
-# ENV PORT=8080
+COPY app/build/lib/* build/lib/
+
+COPY app/build/libs/app.jar build/
+
+WORKDIR /app/build
+ENTRYPOINT java -jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","demo.jar"]
